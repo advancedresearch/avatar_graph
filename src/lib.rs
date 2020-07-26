@@ -2,25 +2,37 @@
 //!
 //! A library for Avatar Graphs.
 //!
-//! An Avatar Graph is an advanced sub-type of graphs
-//! which model provides intuition about deep and important mathematical semantics.
+//! ![avatar5-01.png](https://raw.githubusercontent.com/advancedresearch/avatar_graph/master/images/avatar5-01.png)
+//! ![avatar8-02.png](https://raw.githubusercontent.com/advancedresearch/avatar_graph/master/images/avatar8-02.png)
+//! ![avatar3-01.png](https://raw.githubusercontent.com/advancedresearch/avatar_graph/master/images/avatar3-01.png)
 //!
-//! For more information, see paper [Avatar Graphs](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip/avatar-graphs.pdf).
+//! *An Avatar Graph is a special kind of graph that is useful for mathematical programming.*
+//!
+//! An Avatar Graph is an sub-type of graphs
+//! which is used as a theorem proving technique/tool in [Path Semantics](https://github.com/advancedresearch/path_semantics).
+//!
+//! For more information, see the paper [Avatar Graphs](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip/avatar-graphs.pdf).
 //!
 //! ### Introduction to Avatar Graphs
 //!
-//! The central insight of an Avatar Graph is how to construct extensions of
-//! existing mathematical models that integrates information without any relations for
-//! introspection in the original model.
+//! ![avatar16-01.png](https://raw.githubusercontent.com/advancedresearch/avatar_graph/master/images/avatar16-01.png)
 //!
-//! Such extensions can be very sophisticated and deep.
-//! For example, a variable is classified as 1-avatar extension of a symbol,
-//! since it "integrates information" of a single symbol or expression.
+//! *A hypercube of 4 dimensions. Avatar Graphs can be used to prove isomorphism of graphs to hypercubes.*
+//!
+//! A more practical example for programmers: [The New Type Idiom in Rust](https://doc.rust-lang.org/rust-by-example/generics/new_types.html).
+//!
+//! - Why does it technique work?
+//! - How can one prove that such techniques work in general in mathematics?
+//! - How can such techniques be generalized?
+//!
+//! It turns out that there is a mathematical pattern behind such generalizations.
+//!
+//! At abstract level, this pattern takes the form of an Avatar Graph.
 //!
 //! Avatar Graphs are first and foremost a tool for insight and inspiration.
-//! The are usually not needed to be represented explicitly.
+//! They are usually not needed to be represented explicitly.
 //! This means Avatar Graphs can tell something about mathematical theories
-//! that is not clear seen from within the theory.
+//! that is not clear, seen from within the theory.
 //!
 //! ### Diagrams of Avatar Graphs
 //!
@@ -31,6 +43,8 @@
 //! - white node: N-avatar where where the smallest possible `N` is greater than zero
 //! - black edge: Directed edge depending on choice of core self candidate
 //! - grey/dashed edge: A unique edge from a core self candidate to highest avatar
+//!
+//! ![avatar7-01.png](https://raw.githubusercontent.com/advancedresearch/avatar_graph/master/images/avatar7-01.png)
 //!
 //! ### Unique Highest Avatar
 //!
@@ -104,7 +118,9 @@
 //! isomorphic to some hypercube.
 //!
 //! If this conjecture is correct, then the number of nodes required
-//! to construct a "full" Avatar Graph is `2^n` where `n = 0, 1, 2, ...`.
+//! to construct a "filled" Avatar Graph is:
+//!
+//! `2^n` where `n = 0, 1, 2, ...`.
 
 /// Represents a node in the graph.
 #[derive(Debug, Clone)]
