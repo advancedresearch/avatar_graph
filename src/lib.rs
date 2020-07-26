@@ -52,7 +52,7 @@
 //! due to removal of all irrelevant structure from the graph.
 //!
 //! This is because adding new n-avatars at same level is trivial,
-//! so it is only intestering to study graphs whith a unique highest avatar.
+//! so it is only interesting to study graphs whith a unique highest avatar.
 //!
 //! The choice of highest avatar might depend on order of nodes.
 //! This limitation is mostly irrelevant for most interesting graphs.
