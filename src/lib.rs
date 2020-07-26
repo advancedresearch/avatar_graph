@@ -13,11 +13,38 @@
 //!
 //! For more information, see the paper [Avatar Graphs](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip/avatar-graphs.pdf).
 //!
+//! ### Example: Avatar Graphs and Hypercubes
+//!
+//! Here is an example of theorem proving with Avatar Graphs.
+//!
+//! Conjecture: Any Avatar Graphs containing only core candidates is
+//! isomorphic to some hypercube.
+//!
+//! If this conjecture is correct, then the number of nodes required
+//! to construct a "filled" Avatar Graph is:
+//!
+//! `2^n` where `n = 0, 1, 2, ...`.
+//!
+//! This conjecture has a counter-proof:
+//!
+//! ![wagner.png](https://raw.githubusercontent.com/advancedresearch/avatar_graph/master/images/wagner.png)
+//!
+//! This is called a "Wagner graph". See [wikipedia article](https://en.wikipedia.org/wiki/Wagner_graph) for more information.
+//!
+//! It is easier to see that this graph is not isomorphic to a cube, drawn this way:
+//!
+//! ![wagner-mobius.png](https://raw.githubusercontent.com/advancedresearch/avatar_graph/master/images/wagner-mobius.png)
+//!
+//! However, even the conjecture is wrong, what about the `2^n` law?
+//! A Wagner graph has 8 nodes, which is `2^3`!
+//! So far, nobody has found a counter-proof to the `2^n` law.
+//! This is an open problem.
+//!
 //! ### Introduction to Avatar Graphs
 //!
 //! ![avatar16-01.png](https://raw.githubusercontent.com/advancedresearch/avatar_graph/master/images/avatar16-01.png)
 //!
-//! *A hypercube of 4 dimensions. Avatar Graphs can be used to prove isomorphism of graphs to hypercubes.*
+//! *A hypercube of 4 dimensions. Any hypercube contains only nodes called "core candidates".*
 //!
 //! A more practical example for programmers: [The New Type Idiom in Rust](https://doc.rust-lang.org/rust-by-example/generics/new_types.html).
 //!
@@ -111,16 +138,6 @@
 //!
 //! This property is beneficial in systems where you want to have choices,
 //! but you also want to make continuous progress.
-//!
-//! ### Avatar Graphs and Hypercubes
-//!
-//! Conjecture: Any Avatar Graphs containing only core candidates is
-//! isomorphic to some hypercube.
-//!
-//! If this conjecture is correct, then the number of nodes required
-//! to construct a "filled" Avatar Graph is:
-//!
-//! `2^n` where `n = 0, 1, 2, ...`.
 
 /// Represents a node in the graph.
 #[derive(Debug, Clone)]
