@@ -335,13 +335,34 @@ impl Graph {
         };
         // Order by shortest distance to enumerate children per node.
         dist.sort_by_key(|n| n.1);
+
+        // Count children by shortest distance.
+        let mut count_children = vec![0; self.nodes.len()];
+        for i in 0..dist.len() {
+            let j = dist[i].0;
+            let edges = self.edges_of(j);
+            let mut count = 0;
+            for &e in &edges {
+                for k in 0..i {
+                    if dist[k].0 != e {continue};
+                    count += 1;
+                }
+            }
+            count_children[j] = count;
+        }
+        // Resort such that those with fewer children
+        // get a chance at re-balancing.
+        dist.sort_by(|a, b| {
+            a.1.cmp(&b.1).then((-count_children[a.0]).cmp(&-count_children[b.0]))
+        });
+
         for i in 0..dist.len() {
             let j = dist[i].0;
             let edges = self.edges_of(j);
             // Sum avatar distances of children.
             let mut sum = 0;
             for &e in &edges {
-                for k in (0..i).rev() {
+                for k in 0..i {
                     if dist[k].0 != e {continue};
                     let m = dist[k].1;
                     sum += if m == 0 {1} else {m};
@@ -384,13 +405,15 @@ impl Graph {
         let mut contr = 0;
         for i in 0..dist.len() {
             let j = dist[i].0;
+            let n = dist[i].1;
             let edges = self.edges_of(j);
             // Sum avatar distances of children.
             let mut count = 0;
             for &e in &edges {
-                for k in (0..i).rev() {
+                for k in (0..dist.len()).rev() {
                     if dist[k].0 != e {continue};
-                    if dist[k].1 == 0 {continue}
+                    let m = dist[k].1;
+                    if m == 0 || m > n {continue};
                     count += 1;
                 }
             }
@@ -789,6 +812,26 @@ mod tests {
                 (0, 1), (1, 2),
                 (2, 4), (3, 4),
                 (0, 3), (2, 3)
+            ]
+        };
+        g.corify();
+        assert_eq!(g.cores(), 2);
+    }
+
+    #[test]
+    fn corify_7() {
+        let mut g = Graph {
+            //     __ 6 __
+            //   4 __   __  5
+            //   | __ 2 __  |
+            //   0 __   __  1
+            //        3
+            nodes: vec![Node::new(false); 7],
+            edges: vec![
+                (0, 3), (1, 3), (1, 2),
+                (0, 2), (0, 4), (2, 4),
+                (2, 5), (1, 5), (5, 6),
+                (4, 6)
             ]
         };
         g.corify();
