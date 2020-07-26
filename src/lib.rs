@@ -48,11 +48,14 @@
 //!
 //! A more practical example for programmers: [The New Type Idiom in Rust](https://doc.rust-lang.org/rust-by-example/generics/new_types.html).
 //!
-//! - Why does it technique work?
+//! - Why does this technique work?
 //! - How can one prove that such techniques work in general in mathematics?
 //! - How can such techniques be generalized?
 //!
 //! It turns out that there is a mathematical pattern behind such generalizations.
+//! What these patterns have in common, is that they deal with some kind of
+//! encapsulation of information of objects such that they "play a different role",
+//! yet they "integrate information" with the original object.
 //!
 //! At abstract level, this pattern takes the form of an Avatar Graph.
 //!
