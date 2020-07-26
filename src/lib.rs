@@ -101,7 +101,7 @@
 //! ### Universal Reachability
 //!
 //! All nodes in the graph must be reachable when descending along the gradient
-//! from highest avatar to the core candidate.
+//! from highest avatar to the core candidate, using the shortest path.
 //!
 //! With other words, there exists some path from the highest avatar to any node,
 //! while getting closer to the core all the way.
@@ -368,7 +368,7 @@ impl Graph {
                     sum += if m == 0 {1} else {m};
                 }
             }
-            dist[i].1 = sum;
+            dist[i].1 = sum.max(dist[i].1);
         }
         dist.sort();
         dist
@@ -444,11 +444,14 @@ impl Graph {
     }
 
     /// Returns nodes that are visited when walking from `a` to `b`
-    /// with decreasing avatar distance.
+    /// with decreasing shortest distance.
     ///
     //// Returns `Err` if `b` can not be reached from `a`.
     pub fn along(&self, a: usize, b: usize) -> Result<Vec<usize>, ()> {
-        let dist = self.avatar_distance(b);
+        let dist = match self.distance(b) {
+            Ok(x) => x,
+            Err(_) => return Err(())
+        };
         let k = dist.binary_search_by(|n| n.0.cmp(&a)).map_err(|_| ())?;
         let mut at = vec![dist[k]];
         let mut i = 0;
@@ -461,8 +464,8 @@ impl Graph {
                 let edges = self.edges_of(j);
                 for e in &edges {
                     let k = dist.binary_search_by(|n| n.0.cmp(e)).unwrap();
-                    // Ignore edges that lead to longer avatar distance.
-                    if dist[k].1 >= at[i].1 {continue};
+                    // Ignore edges that lead to longer shortest distance.
+                    if dist[k].1 > at[i].1 {continue};
                     at.push(dist[k]);
                     added = true;
                 }
@@ -477,7 +480,7 @@ impl Graph {
     }
 
     /// Returns `true` if all nodes are reachable from `a` to `b` when
-    /// walking along the gradient of avatar distances.
+    /// walking along the gradient of shortest distances.
     pub fn all_reachable_along(&self, a: usize, b: usize) -> bool {
         match self.along(a, b) {
             Ok(v) => v == (0..self.nodes.len()).collect::<Vec<usize>>(),
@@ -836,5 +839,24 @@ mod tests {
         };
         g.corify();
         assert_eq!(g.cores(), 2);
+    }
+
+    #[test]
+    fn wagner() {
+        //              1
+        //         6    |    7
+        //    2 ------- | ------- 3
+        //         5    |    4
+        //              0
+        let mut g = Graph {
+            nodes: vec![Node::new(false); 8],
+            edges: vec![
+                (0, 1), (2, 3), (5, 7), (4, 6),
+                (0, 4), (0, 5), (2, 5), (2, 6),
+                (1, 6), (1, 7), (3, 7), (3, 4)
+            ]
+        };
+        g.corify();
+        assert_eq!(g.cores(), 8);
     }
 }

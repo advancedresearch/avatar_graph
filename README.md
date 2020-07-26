@@ -101,7 +101,7 @@ One can also think about it as 1-avatars being an exception from the rule.
 ### Universal Reachability
 
 All nodes in the graph must be reachable when descending along the gradient
-from highest avatar to the core candidate.
+from highest avatar to the core candidate, using the shortest path.
 
 With other words, there exists some path from the highest avatar to any node,
 while getting closer to the core all the way.
