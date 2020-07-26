@@ -103,6 +103,11 @@ fn main() {
             if let Button::Keyboard(Key::H) = button {
                 hide = !hide;
             }
+            if let Button::Mouse(MouseButton::Left) = button {
+                if node_pos.len() > 0 {
+                    node_pos[selected] = cursor;
+                }
+            }
             // println!("{:?}", button);
         }
     }
