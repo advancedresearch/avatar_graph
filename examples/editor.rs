@@ -11,6 +11,7 @@ fn main() {
     println!("C - Connect to closest node");
     println!("H - Hide selected start node");
     println!("P - Proof mode (shows why node is not a core)");
+    println!("A - Show avatar distance");
     println!("");
     println!("Proof mode colors:");
     println!("Red - Contractible");
@@ -37,6 +38,7 @@ fn main() {
     let mut hide = false;
     // Show why selected node is not a core.
     let mut proof_mode = false;
+    let mut avatar_distance = false;
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
@@ -154,6 +156,23 @@ fn main() {
                     }
                 }
 
+                if avatar_distance && node_pos.len() > 0 {
+                    let dist = graph.avatar_distance(selected);
+                    let max = dist.iter().map(|n| n.1).max().unwrap();
+                    let radius = radius + 6.0;
+                    let herm = |f: f32| 3.0 * f.powi(2) - 2.0 * f.powi(3);
+                    for &(i, v) in &dist {
+                        let f = v as f32 / max as f32;
+                        ellipse::Ellipse::new_border([1.0 - herm(f), herm(f), 0.5, 1.0], 3.0 - f as f64)
+                            .draw([
+                                node_pos[i][0] - radius,
+                                node_pos[i][1] - radius,
+                                radius * 2.0,
+                                radius * 2.0,
+                            ], &c.draw_state, c.transform, g);
+                    }
+                }
+
                 if !hide {
                     if node_pos.len() > 0 {
                         line::Line::new([0.0, 0.0, 1.0, 0.5], 5.0)
@@ -194,6 +213,9 @@ fn main() {
             }
             if let Button::Keyboard(Key::P) = button {
                 proof_mode = !proof_mode;
+            }
+            if let Button::Keyboard(Key::A) = button {
+                avatar_distance = !avatar_distance;
             }
             if let Button::Mouse(MouseButton::Left) = button {
                 if node_pos.len() > 0 {
