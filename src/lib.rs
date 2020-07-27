@@ -544,22 +544,20 @@ impl Graph {
 
     /// Returns `true` if a graph has correct avatar connectivity.
     pub fn avatar_connectivity(&self, ind: usize) -> bool {
-        let mut dist = self.avatar_distance(ind);
-        dist.sort_by_key(|n| n.1);
+        let dist = self.avatar_distance(ind);
         for i in 0..dist.len() {
             let j = dist[i].0;
             let n = dist[i].1;
             let edges = self.edges_of(j);
             for &e in &edges {
-                for k in 0..dist.len() {
-                    let m = dist[k].1;
-                    if dist[k].0 == e {
-                        if !match n {
-                            0 => m == 1,
-                            1 => m == 0 || m > 1,
-                            n => m > 0 && m < n || m > n,
-                        } {return false};
-                    }
+                let k = dist.binary_search_by(|n| n.0.cmp(&e)).unwrap();
+                let m = dist[k].1;
+                if dist[k].0 == e {
+                    if !match n {
+                        0 => m == 1,
+                        1 => m == 0 || m > 1,
+                        n => m > 0 && m < n || m > n,
+                    } {return false};
                 }
             }
         }
