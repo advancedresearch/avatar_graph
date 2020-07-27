@@ -121,12 +121,29 @@
 //!
 //! ### Non-Contractability
 //!
-//! When an avatar has only one child, it is contractible,
+//! When an avatar has only one child relative to shortest distance, it is contractible,
 //! which is not permitted relative to a core candidate.
 //!
 //! The core self is not counted as a child for contractability.
 //! This means 1-avatars have zero children, therefore not one child.
 //! One can also think about it as 1-avatars being an exception from the rule.
+//!
+//! ### Semi-Contractibility
+//!
+//! Since the non-contractibility rule uses shortest distance instead of avatar distances,
+//! there are some cases where avatars are semi-contractible.
+//!
+//! ![avatar8-04.png](https://raw.githubusercontent.com/advancedresearch/avatar_graph/master/images/avatar8-04.png)
+//!
+//! *Example of a graph with semi-contractibility.*
+//!
+//! Semi-contractibility happens when avatars are contractible by avatar distance but not by shortest distance.
+//!
+//! Semi-contractibility means that two avatars at same level need to agree on how to integrate information.
+//! They are using each other as children, depending on the order of nodes in the graph.
+//!
+//! This property is allowed since otherwise the Avatar Graphs would not be symmetric
+//! in cases where the topology contains features similar to a Möbius strip.
 //!
 //! ### Universal Reachability
 //!
