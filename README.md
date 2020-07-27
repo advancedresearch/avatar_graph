@@ -130,14 +130,15 @@ One can also think about it as 1-avatars being an exception from the rule.
 
 ### Universal Reachability
 
-All nodes in the graph must be reachable when descending along the gradient
-from highest avatar to the core candidate, using the shortest path.
+All nodes in the graph must be reachable when
+walking from the highest avatar to the core candidate,
+without moving further away than the distance given by the shortest path.
 
 With other words, there exists some path from the highest avatar to any node,
-while getting closer to the core all the way.
+while either moving closer to preserving the distance to the core candidate.
 
 Another way of thinking about this property, is that for a well-chosen path
 from the highest avatar to the core, one can visit any node.
 
 This property is beneficial in systems where you want to have choices,
-but you also want to make continuous progress.
+but you also want to avoid regression.

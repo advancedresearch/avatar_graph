@@ -130,17 +130,18 @@
 //!
 //! ### Universal Reachability
 //!
-//! All nodes in the graph must be reachable when descending along the gradient
-//! from highest avatar to the core candidate, using the shortest path.
+//! All nodes in the graph must be reachable when
+//! walking from the highest avatar to the core candidate,
+//! without moving further away than the distance given by the shortest path.
 //!
 //! With other words, there exists some path from the highest avatar to any node,
-//! while getting closer to the core all the way.
+//! while either moving closer to preserving the distance to the core candidate.
 //!
 //! Another way of thinking about this property, is that for a well-chosen path
 //! from the highest avatar to the core, one can visit any node.
 //!
 //! This property is beneficial in systems where you want to have choices,
-//! but you also want to make continuous progress.
+//! but you also want to avoid regression.
 
 /// Represents a node in the graph.
 #[derive(Debug, Clone)]
@@ -503,29 +504,32 @@ impl Graph {
             Err(_) => return Err(())
         };
         let k = dist.binary_search_by(|n| n.0.cmp(&a)).map_err(|_| ())?;
+        let max_dist = dist[k].1;
         let mut at = vec![dist[k]];
         let mut i = 0;
+        let mut reached = vec![false; dist.len()];
+        reached[k] = true;
         loop {
-            let mut added = false;
+            if i >= at.len() {break};
+            if reached.iter().all(|&b| b) {break};
             let j = at[i].0;
             // Ignore edges of target,
             // since other edges connected to it should not be added.
             if at[i].1 != 0 {
                 let edges = self.edges_of(j);
                 for e in &edges {
+                    if reached[*e] {continue};
                     let k = dist.binary_search_by(|n| n.0.cmp(e)).unwrap();
-                    // Ignore edges that lead to longer shortest distance.
-                    if dist[k].1 > at[i].1 {continue};
+                    // Ignore edges that lead to longer shortest distance than start node.
+                    if dist[k].1 > max_dist {continue};
                     at.push(dist[k]);
-                    added = true;
+                    reached[k] = true;
                 }
             }
-            if !added {break}
             i += 1;
         }
         let mut nodes: Vec<usize> = at.into_iter().map(|n| n.0).collect();
         nodes.sort();
-        nodes.dedup();
         Ok(nodes)
     }
 
@@ -937,6 +941,26 @@ mod tests {
                 (0, 1), (2, 3), (5, 7), (4, 6),
                 (0, 4), (0, 5), (2, 5), (2, 6),
                 (1, 6), (1, 7), (3, 7), (3, 4)
+            ]
+        };
+        g.corify();
+        assert_eq!(g.cores(), 8);
+    }
+
+    #[test]
+    fn corify_8() {
+        //        0
+        //     4 _  _ 6
+        //  2   _ X _     3
+        //     7      5
+        //        1
+        let mut g = Graph {
+            nodes: vec![Node::new(false); 8],
+            edges: vec![
+                (0, 6), (3, 6), (3, 5),
+                (1, 5), (1, 7), (2, 7),
+                (2, 4), (0, 4), (4, 5),
+                (6, 7)
             ]
         };
         g.corify();

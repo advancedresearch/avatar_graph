@@ -176,6 +176,7 @@ fn main() {
                 let min = min_pos(&node_pos, cursor);
                 if min.is_some() {
                     selected = min.unwrap().0;
+                    println!("Selected {}", selected);
                 }
             }
             if let Button::Keyboard(Key::C) = button {
