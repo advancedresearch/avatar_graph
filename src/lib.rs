@@ -428,7 +428,7 @@ impl Graph {
             let j = dist[i].0;
             let n = dist[i].1;
             let edges = self.edges_of(j);
-            // Sum avatar distances of children.
+            // Sum shortest distances of children.
             let mut count = 0;
             for &e in &edges {
                 for k in (0..dist.len()).rev() {
