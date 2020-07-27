@@ -152,7 +152,7 @@ walking from the highest avatar to the core candidate,
 without moving further away than the distance given by the shortest path.
 
 With other words, there exists some path from the highest avatar to any node,
-while either moving closer to preserving the distance to the core candidate.
+while either moving closer, or preserving the distance, to the core candidate.
 
 Another way of thinking about this property, is that for a well-chosen path
 from the highest avatar to the core, one can visit any node.
