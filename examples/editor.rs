@@ -9,6 +9,16 @@ fn main() {
     println!("Space - Add new node");
     println!("S - Select start node");
     println!("C - Connect to closest node");
+    println!("H - Hide selected start node");
+    println!("P - Proof mode (shows why node is not a core)");
+    println!("");
+    println!("Proof mode colors:");
+    println!("Red - Contractible");
+    println!("Blue - Unreachable");
+    println!("Green - Non-unique max avatar");
+    println!("Torquoise - Not universal reachable (along)");
+    println!("Orange - Avatar connectivity failures");
+    println!("");
 
     let opengl = OpenGL::V3_2;
     let settings = WindowSettings::new("Avatar Graph Editor", [512; 2])
@@ -25,6 +35,8 @@ fn main() {
     let mut cursor: [f64; 2] = [0.0; 2];
     let mut selected = 0;
     let mut hide = false;
+    // Show why selected node is not a core.
+    let mut proof_mode = false;
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
@@ -66,6 +78,82 @@ fn main() {
                         ], &c.draw_state, c.transform, g);
                 }
 
+                if proof_mode && node_pos.len() > 0 {
+                    if !graph.nodes[selected].core {
+                        let mut nodes = vec![];
+                        let mut color = [1.0; 4];
+                        let contractibles = graph.contractibles_of(selected);
+                        let mut max_avatar: Option<usize> = None;
+                        if contractibles.len() > 0 {
+                            // Show nodes that are contractible.
+                            nodes = contractibles;
+                            color = [1.0, 0.0, 0.0, 1.0];
+                        }
+                        if nodes.len() == 0 {
+                            let dist = graph.distance(selected);
+                            match dist {
+                                Err(dist) => {
+                                    // Show nodes that are unreachable from selected node.
+                                    let mut res = vec![];
+                                    for i in 0..graph.nodes.len() {
+                                        if dist.binary_search_by(|n| n.0.cmp(&i)).is_err() {
+                                            res.push(i);
+                                        }
+                                    }
+                                    nodes = res;
+                                    color = [0.0, 0.0, 1.0, 1.0];
+                                }
+                                Ok(_) => {}
+                            }
+                        }
+                        if nodes.len() == 0 {
+                            let max_avatars = graph.max_avatars(selected);
+                            if max_avatars.1.len() > 1 {
+                                // Show max avatars.
+                                nodes = max_avatars.1;
+                                color = [0.0, 1.0, 0.0, 1.0];
+                            }
+                        }
+                        if nodes.len() == 0 {
+                            let max_avatars = graph.max_avatars(selected);
+                            max_avatar = Some(max_avatars.1[0]);
+                            if let Ok(along) = graph.along(max_avatars.1[0], selected) {
+                                // Show nodes that are not reachable along the path.
+                                let mut res = vec![];
+                                for i in 0..graph.nodes.len() {
+                                    if along.binary_search_by(|n| n.cmp(&i)).is_err() {
+                                        res.push(i);
+                                    }
+                                }
+                                nodes = res;
+                                color = [0.0, 0.7, 1.0, 1.0];
+                            }
+                        }
+                        if nodes.len() == 0 {
+                            // Show avatar connectivity failures.
+                            nodes = graph.avatar_connectivity_failures_of(selected);
+                            color = [1.0, 0.7, 0.0, 1.0];
+                        }
+
+                        for &i in &nodes {
+                            ellipse::Ellipse::new_border(color, 2.0).draw([
+                                    node_pos[i][0] - radius,
+                                    node_pos[i][1] - radius,
+                                    radius * 2.0,
+                                    radius * 2.0,
+                                ], &c.draw_state, c.transform, g);
+                        }
+                        if let Some(i) = max_avatar {
+                            ellipse::Ellipse::new_border([0.5, 0.5, 0.5, 1.0], 3.0).draw([
+                                    node_pos[i][0] - radius,
+                                    node_pos[i][1] - radius,
+                                    radius * 2.0,
+                                    radius * 2.0,
+                                ], &c.draw_state, c.transform, g);
+                        }
+                    }
+                }
+
                 if !hide {
                     if node_pos.len() > 0 {
                         line::Line::new([0.0, 0.0, 1.0, 0.5], 5.0)
@@ -102,6 +190,9 @@ fn main() {
             }
             if let Button::Keyboard(Key::H) = button {
                 hide = !hide;
+            }
+            if let Button::Keyboard(Key::P) = button {
+                proof_mode = !proof_mode;
             }
             if let Button::Mouse(MouseButton::Left) = button {
                 if node_pos.len() > 0 {

@@ -444,6 +444,36 @@ impl Graph {
         contr
     }
 
+    /// Returns the contractible nodes relative to a core.
+    pub fn contractibles_of(&self, ind: usize) -> Vec<usize> {
+        let mut dist = match self.distance(ind) {
+            Ok(x) => x,
+            Err(x) => x,
+        };
+        // Order by shortest distance to enumerate children per node.
+        dist.sort_by_key(|n| n.1);
+        let mut res = vec![];
+        for i in 0..dist.len() {
+            let j = dist[i].0;
+            let n = dist[i].1;
+            let edges = self.edges_of(j);
+            // Sum avatar distances of children.
+            let mut count = 0;
+            for &e in &edges {
+                for k in (0..dist.len()).rev() {
+                    if dist[k].0 != e {continue};
+                    let m = dist[k].1;
+                    if m == 0 || m > n {continue};
+                    count += 1;
+                }
+            }
+            if count == 1 {
+                res.push(j);
+            }
+        }
+        res
+    }
+
     /// Swaps two nodes.
     pub fn swap(&mut self, a: usize, b: usize) {
         // Swap edges.
@@ -530,6 +560,39 @@ impl Graph {
             }
         }
         true
+    }
+
+    /// Returns a list of nodes which have wrong avatar connectivity.
+    pub fn avatar_connectivity_failures_of(&self, ind: usize) -> Vec<usize> {
+        let mut dist = self.avatar_distance(ind);
+        dist.sort_by_key(|n| n.1);
+        let mut res = vec![];
+        for i in 0..dist.len() {
+            let j = dist[i].0;
+            if j == ind {continue};
+            let n = dist[i].1;
+            let edges = self.edges_of(j);
+            let mut found = false;
+            'outer: for &e in &edges {
+                for k in 0..dist.len() {
+                    let m = dist[k].1;
+                    if dist[k].0 == e {
+                        if !match n {
+                            0 => m == 1,
+                            1 => m == 0 || m > 1,
+                            n => m > 0 && m < n || m > n,
+                        } {
+                            found = true;
+                            break 'outer;
+                        }
+                    }
+                }
+            }
+            if found {
+                res.push(j);
+            }
+        }
+        res
     }
 
     /// Returns `true` if the graph is an Avatar Graph seen from a core.
