@@ -259,7 +259,7 @@ impl Graph {
         sum
     }
 
-    /// REmoves all self unique edges.
+    /// Removes all self unique edges.
     pub fn remove_self_unique_edges(&mut self) {
         for i in 0..self.nodes.len() {
             if let Some(j) = self.nodes[i].uniq {
