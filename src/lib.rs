@@ -36,9 +36,13 @@
 //! ![wagner-mobius.png](https://raw.githubusercontent.com/advancedresearch/avatar_graph/master/images/wagner-mobius.png)
 //!
 //! However, even the conjecture is wrong, what about the `2^n` law?
-//! A Wagner graph has 8 nodes, which is `2^3`!
-//! So far, nobody has found a counter-proof to the `2^n` law.
-//! This is an open problem.
+//! A Wagner graph has 8 nodes, which is `2^3`.
+//!
+//! Conjecture: The number of nodes in every filled Avatar Graph is `2^n` for some `n`.
+//!
+//! This conjecture has a counter-proof:
+//!
+//! ![avatar6-03.png](https://raw.githubusercontent.com/advancedresearch/avatar_graph/master/images/avatar6-03.png)
 //!
 //! ### Introduction to Avatar Graphs
 //!
