@@ -750,6 +750,11 @@ mod tests {
 
     #[test]
     fn avatar3() {
+        //      a ----- b
+        //      |       |  \
+        //      |       |    e
+        //      |       |  /
+        //      c ----- d
         let mut g = Graph::new();
         let a = g.add_node(Node::new(true));
         let b = g.add_node(Node::new(false));
