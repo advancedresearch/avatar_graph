@@ -985,4 +985,48 @@ mod tests {
         g.corify();
         assert_eq!(g.cores(), 8);
     }
+
+    #[test]
+    fn corify_9() {
+        //                   8
+        //              /          \
+        //          /                  \
+        //        0------1-------2-------3
+        //        |        \   /         |
+        //        |         \/           |
+        //        |         /\           |
+        //        |       /    \         |
+        //        4------5-------6-------7
+        //          \                  /
+        //              \         /
+        //                   9
+        let mut g = Graph {
+            nodes: vec![Node { core: false, uniq: None }; 10],
+            edges: vec![
+                (0, 8), (3, 8), (0, 1), (1, 2),
+                (2, 3), (0, 4), (1, 6), (2, 5),
+                (3, 7), (4, 5), (5, 6), (6, 7),
+                (4, 9), (7, 9)
+            ]
+        };
+        g.corify();
+        // assert_eq!(g.cores(), 4);
+    }
+
+    #[test]
+    fn corify_10() {
+        //  0 ------- 1
+        //  |         |
+        //  2         |
+        // 4 3 ------ 5
+        let mut g = Graph {
+            nodes: vec![Node { core: false, uniq: None }; 6],
+            edges: vec![
+                (0, 1), (0, 2), (2, 4), (3, 4),
+                (2, 3), (3, 5), (1, 5)
+            ]
+        };
+        g.corify();
+        // assert_eq!(g.cores(), 3);
+    }
 }
